@@ -28,11 +28,23 @@ export const authOptions = {
         const existingUser = await User.findOne({ email: user.email });
 
         if (!existingUser) {
-          const newUser = await User.create({
-            email: user.email,
-            name: user.name,
-            referrer: referrer || null,
-          });
+           const data = {
+      email: user.email,
+      name: user.name,
+    };
+
+    const mongoose = require("mongoose");
+
+    if (
+      referrer &&
+      referrer !== "undefined" &&
+      referrer !== "null" &&
+      mongoose.Types.ObjectId.isValid(referrer)
+    ) {
+      data.referrer = referrer;
+    }
+
+    await User.create(data);
         }
 
         return true;
