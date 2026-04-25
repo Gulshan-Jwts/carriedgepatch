@@ -72,7 +72,7 @@ const Page = () => {
   };
 
   const copyReferral = async () => {
-    const refLink = `carriagepatch.app/ref/${user?._id}`;
+    const refLink = `carriedgepatch.vercel.app/?ref=${user?._id}`;
     await navigator.clipboard.writeText(refLink);
 
     const btn = document.getElementById("copyAction");
@@ -172,7 +172,7 @@ const Page = () => {
           <div className="setting-info">
             <div className="setting-title">Referral Link</div>
             <div className="setting-desc" id="refLink">
-              carriagepatch.app/ref/
+              carriedgepatch.vercel.app/?ref=
               {user?._id}
             </div>
           </div>

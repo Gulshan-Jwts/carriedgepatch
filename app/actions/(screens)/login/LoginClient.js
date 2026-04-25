@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import "@/stylesheet/user/login.css";
+import Link from "next/link";
 
 const LoginClient = () => {
   const { data: session, status } = useSession();
@@ -21,57 +22,18 @@ const LoginClient = () => {
     <div className="login-container">
       <header className="app-logo-area">
         <div className="logo-icon-wrapper">
-          <span className="material-symbols-rounded" style={{ fontSize: 40 }}>
-            <svg
-              width="50"
-              height="50"
-              viewBox="0 0 512 512"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <rect width="512" height="512" rx="120" fill="#E0EBFF" />
-
-              <path
-                d="M110 210C160 150 240 130 310 150C350 160 385 185 415 220"
-                stroke="#2563EB"
-                strokeWidth="35"
-                strokeLinecap="round"
-              />
-
-              <path
-                d="M175 285C210 245 270 235 315 255C335 265 355 280 375 305"
-                stroke="#2563EB"
-                strokeWidth="35"
-                strokeLinecap="round"
-              />
-
-              <g transform="translate(250, 340)">
-                <path
-                  d="M-60 0H80"
-                  stroke="#1E40AF"
-                  strokeWidth="35"
-                  strokeLinecap="round"
-                />
-
-                <path
-                  d="M-55 45H75"
-                  stroke="#1E40AF"
-                  strokeWidth="35"
-                  strokeLinecap="round"
-                />
-
-                <path
-                  d="M70 45C70 45 75 -5 10 -5C-40 -5 -50 40 -50 40L60 130"
-                  stroke="#1E40AF"
-                  strokeWidth="35"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </g>
-            </svg>
-          </span>
+          <Image
+            src="/logo.png"
+            alt="CarriagePatch Logo"
+            width={50}
+            height={50}
+            style={{ borderRadius: 20 }}
+          />
         </div>
 
-        <h1 className="app-name">CarriagePatch</h1>
+        <h1 className="app-name">
+          <Link href="/about">CarriagePatch</Link>
+        </h1>
 
         <p className="app-tagline">
           Share your unused data and earn instantly.
@@ -87,7 +49,8 @@ const LoginClient = () => {
           signIn("google", {
             callbackUrl: `/actions/home?ref=${referrer || ""}` || "/",
           });
-        }}>
+        }}
+      >
         <svg className="google-icon" viewBox="0 0 24 24">
           <path
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

@@ -6,6 +6,7 @@ import "@/stylesheet/user/home.css";
 import { useUser } from "@/lib/useUser";
 import { useToast } from "@/components/ToastContext";
 import { mutate } from "swr";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { data, isLoading } = useUser();
@@ -19,8 +20,10 @@ export default function Home() {
   const [speed, setSpeed] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const [earned, setEarned] = useState(0);
+  const [popupMessage, setPopupMessage] = useState({ title: "", message: "" });
 
   const isConnectedRef = useRef(false);
+  const router = useRouter();
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -31,7 +34,7 @@ export default function Home() {
           ? "Good Afternoon"
           : "Good Evening";
 
-    setGreeting(greetingEl);
+    setGreeting(greetingEl + ",");
   }, []);
 
   useEffect(() => {
@@ -209,6 +212,10 @@ export default function Home() {
         <header style={{ margin: "24px 0" }}>
           <h1 id="greeting" style={{ fontSize: "1.75rem", fontWeight: 500 }}>
             {greeting}
+            <span style={{ color: "var(--accent-blue)" }}>
+              {" "}
+              {user?.name?.split(" ")[0].toUpperCase()}
+            </span>
           </h1>
           <p style={{ color: "var(--text-sub)" }}>Share data and earn</p>
         </header>
@@ -223,7 +230,8 @@ export default function Home() {
             <div
               className="chip"
               id="openRefer"
-              onClick={() => setReferPanel(!referPanel)}>
+              onClick={() => setReferPanel(!referPanel)}
+            >
               <span className="material-symbols-rounded">group</span>Refer
             </div>
 
@@ -249,7 +257,8 @@ export default function Home() {
               color: "var(--text-sub)",
               fontSize: "0.85rem",
               fontWeight: 500,
-            }}>
+            }}
+          >
             Current Earnings
           </p>
           <h2 style={{ fontSize: "2.5rem", fontWeight: 500, margin: "8px 0" }}>
@@ -262,7 +271,8 @@ export default function Home() {
               <div
                 className="progress-fill"
                 style={{ width: `${percentage}%` }}
-                id="progressBar"></div>
+                id="progressBar"
+              ></div>
             </div>
             <div className="progress-labels">
               <span id="progressText">
@@ -280,7 +290,8 @@ export default function Home() {
         <section
           className={`card ${isConnected && "connected"}`}
           id="speedCard"
-          style={{ display: "flex", alignItems: "center" }}>
+          style={{ display: "flex", alignItems: "center" }}
+        >
           <div className="speed-box" id="speedIcon">
             <span className="material-symbols-rounded">speed</span>
           </div>
@@ -312,7 +323,8 @@ export default function Home() {
                 color: "var(--accent-blue)",
                 fontWeight: 700,
                 fontSize: "0.85rem",
-              }}>
+              }}
+            >
               View all
             </button>
           </Link>
@@ -338,7 +350,8 @@ export default function Home() {
                       item?.source === "refer"
                         ? "var(--accent-blue)"
                         : "var(--green)",
-                  }}>
+                  }}
+                >
                   <span className="material-symbols-rounded">
                     {item?.source === "refer" ? "person_add" : "wifi_tethering"}
                   </span>
@@ -356,7 +369,8 @@ export default function Home() {
                   </p>
                   {item?.source === "refer" && !item?.isPending ? (
                     <span
-                      className={`tag tag-${!item?.isCredited ? "pending" : "completed"}`}>
+                      className={`tag tag-${!item?.isCredited ? "pending" : "completed"}`}
+                    >
                       {!item?.isCredited ? "Pending" : "Completed"}
                     </span>
                   ) : null}
@@ -366,12 +380,14 @@ export default function Home() {
                   {item?.source === "refer" && item?.isPending ? (
                     <Link
                       className="claim-btn"
-                      href={`/actions/withdraw/${item?.source === "refer" ? (50).toFixed(0) : (item?.data / 10).toFixed(0) || 0}`}>
+                      href={`/actions/withdraw/${item?.source === "refer" ? (50).toFixed(0) : (item?.data / 10).toFixed(0) || 0}`}
+                    >
                       Claim
                     </Link>
                   ) : (
                     <div
-                      className={`amount-text text-${item?.source === "refer" && !item?.isCredited ? "neutral" : "green"}`}>
+                      className={`amount-text text-${item?.source === "refer" && !item?.isCredited ? "neutral" : "green"}`}
+                    >
                       +&#8377; {amount || 0}
                     </div>
                   )}
@@ -385,7 +401,8 @@ export default function Home() {
         className={`panel ${referPanel && "show"}`}
         onClick={() => setReferPanel(false)}
         onBlur={() => setReferPanel(false)}
-        id="panel"></div>
+        id="panel"
+      ></div>
 
       <div className={`bottom-sheet ${referPanel && "show"}`} id="referSheet">
         <div className="drag-handle"></div>
@@ -402,7 +419,8 @@ export default function Home() {
           <div className="step-item">
             <div
               className="step-icon"
-              style={{ background: "#e8f0fe", color: "#1a73e8" }}>
+              style={{ background: "#e8f0fe", color: "#1a73e8" }}
+            >
               <span className="material-symbols-rounded">send</span>
             </div>
             <div className="step-content">
@@ -414,7 +432,8 @@ export default function Home() {
           <div className="step-item">
             <div
               className="step-icon"
-              style={{ background: "#f1f3f4", color: "#ff8000" }}>
+              style={{ background: "#f1f3f4", color: "#ff8000" }}
+            >
               <span className="material-symbols-rounded">verified_user</span>
             </div>
             <div className="step-content">
@@ -428,7 +447,8 @@ export default function Home() {
           <div className="step-item">
             <div
               className="step-icon"
-              style={{ background: "#e6f4ea", color: "#1e8e3e" }}>
+              style={{ background: "#e6f4ea", color: "#1e8e3e" }}
+            >
               <span className="material-symbols-rounded">account_balance</span>
             </div>
             <div className="step-content">
@@ -452,24 +472,27 @@ export default function Home() {
               overflow: "hidden",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
-            }}>
-            carriagepatch.app/?ref={user?._id}
+            }}
+          >
+            carriedgepatch.vercel.app/?ref={user?._id}
           </span>
           <button
             id="copyBtn"
             className="icon-btn"
             onClick={function () {
               setIsCopied("done");
-              const linkText = "carriagepatch.app/?ref=" + user?._id;
+              const linkText = "carriedgepatch.vercel.app/?ref=" + user?._id;
               navigator.clipboard.writeText(linkText);
 
               setTimeout(() => {
                 setIsCopied("content_copy");
               }, 2000);
-            }}>
+            }}
+          >
             <span
               className="material-symbols-rounded"
-              style={{ fontSize: "20px" }}>
+              style={{ fontSize: "20px" }}
+            >
               {isCopied}
             </span>
           </button>
@@ -481,14 +504,17 @@ export default function Home() {
         id="connectBtn"
         onClick={() => {
           if (isConnected) {
-            const confirm = window.confirm("Are you sure want to disconnect?");
-            if (!confirm) return;
-            disconnect(percentage);
+            setPopupMessage({
+              title: "Do you really want to stop sharing?",
+              message: `Maybe your first plan will be deactivated.`,
+            });
+            setShowRewardPopup(false);
           } else {
             if (!dailyQuota) {
               if (user?.plan?.active > 0) {
                 Toast.show("Your daily quota had been ended");
               } else {
+                router.push(`/actions/plans`);
                 Toast.show("Activate any plan to continue");
               }
               return;
@@ -496,7 +522,8 @@ export default function Home() {
             connect();
           }
         }}
-        data-state={isConnected ? "connected" : "disconnected"}>
+        data-state={isConnected ? "connected" : "disconnected"}
+      >
         {isConnected ? (
           <>
             <span className="material-symbols-rounded">pause_circle</span>
@@ -512,7 +539,8 @@ export default function Home() {
 
       <div
         className={`reward-popup-overlay ${showRewardPopup || user?.earned ? "show" : ""}`}
-        id="rewardPopup">
+        id="rewardPopup"
+      >
         <div className="reward-modal">
           <div className="reward-content">
             <div className="reward-icon-container">
@@ -531,6 +559,49 @@ export default function Home() {
             <Link href={`/actions/withdraw/${earned?.toFixed(0)}`}>
               <button className="btn-fill">Withdraw now</button>
             </Link>
+          </div>
+        </div>
+      </div>
+      <div
+        className={`popup-overlay ${popupMessage.message.length > 0 && "show"}`}
+        id="popupOverlay"
+      >
+        <div className="popup">
+          <h3
+            id="popupTitle"
+            style={{
+              fontWeight: 500,
+              marginBottom: "12px",
+              color: "var(--text-main)",
+            }}
+          >
+            {popupMessage.title}
+          </h3>
+          <p
+            id="popupMessage"
+            style={{
+              color: "var(--text-sub)",
+              fontSize: "0.9rem",
+              lineHeight: "1.4",
+            }}
+          >
+            {popupMessage.message}
+          </p>
+          <div className="popup-actions">
+            <button
+              className="text-button"
+              onClick={() => disconnect(percentage)}
+              id="closepopup"
+            >
+              Stop Sharing
+            </button>
+            <button
+              className="text-button"
+              onClick={() => setPopupMessage({ message: "", title: "" })}
+              id="closepopup"
+            >
+              Keep Sharing
+            </button>
           </div>
         </div>
       </div>

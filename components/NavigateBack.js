@@ -2,21 +2,21 @@
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
-const NavigateBack = () => {
+const NavigateBack = (prop) => {
   let pathname = usePathname();
-  pathname = pathname.split("/")[2];
+  pathname = pathname.split("/")[prop?.level || 2];
   const router = useRouter();
 
   const handleBack = () => {
     if (window.history.length > 1) {
       router.back();
     } else {
-      router.push("/home");
+      router.push("/actions/home");
     }
   };
   return (
     <>
-      {!pathname.includes("login") && (
+      {!pathname?.includes("login") && (
         <nav
         style={{
           display: "flex",
@@ -39,7 +39,7 @@ const NavigateBack = () => {
               marginLeft: "16px",
               color: "var(--text-main)",
             }}>
-            {pathname[0].toUpperCase() + pathname.slice(1).split("/")[0]}
+            {pathname && pathname[0].toUpperCase() + pathname.slice(1).split("/")[0]}
           </div>
         </nav>
       )}
