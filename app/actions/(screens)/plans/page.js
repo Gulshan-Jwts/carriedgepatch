@@ -43,16 +43,8 @@ export default function PlansPage() {
         setDidOpenUPI(true);
         console.log("User likely opened UPI app");
       } else {
+        handleBuyClick();
         console.log("User returned");
-        setTimeout(() => {
-          if (didOpenUPI) {
-            handleBuyClick();
-            setDidOpenUPI(false);
-          } else {
-            Toast.show("Can't open UPI app.");
-            console.log("User did not open UPI app");
-          }
-        }, 4000);
       }
     };
 
@@ -174,7 +166,10 @@ export default function PlansPage() {
           <input
             type="number"
             value={phone}
-            onChange={(e) => {setPhone(e.target.value.slice(0, 10));console.log(e.target.value.slice(0, 10))}}
+            onChange={(e) => {
+              setPhone(e.target.value.slice(0, 10));
+              console.log(e.target.value.slice(0, 10));
+            }}
             placeholder="UPI Phone Number"
             className="input-field"
           />
@@ -182,8 +177,21 @@ export default function PlansPage() {
             <button
               className="save-btn"
               onClick={() => {
-                window.location.href =
-                  "upi://pay?pa=carriagepatch.pvt.ltd@okicici&pn=CarriagePatch%20PVT%20LTD&am=299.00&cu=INR";
+                try {
+                  window.location.href =
+                    "upi://pay?pa=carriagepatch.pvt.ltd@okicici&pn=CarriagePatch%20PVT%20LTD&am=299.00&cu=INR";
+
+                  setTimeout(() => {
+                    if (!didOpenUPI) {
+                      Toast.show(
+                        "No UPI app found. Please install Google Pay or PhonePe.",
+                      );
+                    }
+                  }, 1500);
+                } catch (error) {
+                  console.error("Error opening UPI app:", error);
+                  Toast.show("Can't open UPI app.");
+                }
               }}
               disabled={isSaving}
             >
@@ -196,7 +204,14 @@ export default function PlansPage() {
                 try {
                   window.location.href =
                     "upi://pay?pa=carriagepatch.pvt.ltd@okicici&pn=CarriagePatch%20PVT%20LTD&am=299.00&cu=INR";
-                  
+
+                  setTimeout(() => {
+                    if (!didOpenUPI) {
+                      Toast.show(
+                        "No UPI app found. Please install Google Pay or PhonePe.",
+                      );
+                    }
+                  }, 1500);
                 } catch (error) {
                   console.error("Error opening UPI app:", error);
                   Toast.show("Can't open UPI app.");
