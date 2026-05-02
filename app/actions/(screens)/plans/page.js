@@ -2,34 +2,19 @@
 
 import Link from "next/link";
 import "@/stylesheet/user/plans.css";
-// import { useEffect } from "react";
+import { useEffect } from "react";
 import { useToast } from "@/components/ToastContext";
 import { mutate } from "swr";
 import { useState } from "react";
 
 export default function PlansPage() {
-  //   useEffect(() => {
-  //   const handleVisibilityChange = () => {
-  //     if (document.hidden) {
-  //       console.log("User likely switched to UPI app");
-  //     } else {
-  //       console.log("User returned to site");
-  //     }
-  //   };
-
-  //   document.addEventListener("visibilitychange", handleVisibilityChange);
-
-  //   return () => {
-  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
-  //   };
-  // }, []);
-
   const { Toast } = useToast();
 
   const [showDialoge, setShowDialoge] = useState(false);
   const [showCheckoutFor, setShowCheckoutFor] = useState(0);
   const [phone, setPhone] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [didOpenUPI, setDidOpenUPI] = useState(false);
 
   const handleBuyClick = async () => {
     setIsSaving(true);
@@ -51,6 +36,32 @@ export default function PlansPage() {
     setIsSaving(false);
     setShowDialoge(true);
   };
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setDidOpenUPI(true);
+        console.log("User likely opened UPI app");
+      } else {
+        console.log("User returned");
+        setTimeout(() => {
+          if (didOpenUPI) {
+            handleBuyClick();
+            setDidOpenUPI(false);
+          } else {
+            Toast.show("Can't open UPI app.");
+            console.log("User did not open UPI app");
+          }
+        }, 4000);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [didOpenUPI]);
 
   return (
     <div className="plans-container">
@@ -84,7 +95,8 @@ export default function PlansPage() {
 
           <button
             className="buy-btn btn-outline"
-            onClick={() => setShowCheckoutFor(2)}>
+            onClick={() => setShowCheckoutFor(2)}
+          >
             Buy Now
           </button>
         </section>
@@ -116,7 +128,8 @@ export default function PlansPage() {
 
           <button
             className="buy-btn btn-filled"
-            onClick={() => setShowCheckoutFor(3)}>
+            onClick={() => setShowCheckoutFor(3)}
+          >
             Buy Now
           </button>
         </section>
@@ -124,7 +137,8 @@ export default function PlansPage() {
 
       <div
         className={`dialog-overlay ${showDialoge ? "show" : ""}`}
-        id="activationDialog">
+        id="activationDialog"
+      >
         <div className="dialog">
           <h3 className="dialog-title">Payment Successful</h3>
           <p className="dialog-msg">
@@ -143,12 +157,14 @@ export default function PlansPage() {
           className={`scrim ${showCheckoutFor > 0 ? "show" : ""}`}
           onClick={() => {
             setShowCheckoutFor(0);
-          }}></div>
+          }}
+        ></div>
       )}
-      
+
       <div
         className={`bottom-panel ${showCheckoutFor > 0 ? "show" : ""}`}
-        id="editSheet">
+        id="editSheet"
+      >
         <div className="sheet-handle"></div>
 
         <h3>Update your phone number</h3>
@@ -158,32 +174,38 @@ export default function PlansPage() {
           <input
             type="number"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => {setPhone(e.target.value.slice(0, 10));console.log(e.target.value.slice(0, 10))}}
             placeholder="UPI Phone Number"
             className="input-field"
           />
           {showCheckoutFor === 2 ? (
-            <Link
-              href="upi://pay?pa=carriagepatch.pvt.ltd@okicici&pn=CarriagePatch%20PVT%20LTD&am=199.00&cu=INR"
-              className="buy-link">
-              <button
-                className="save-btn"
-                onClick={handleBuyClick}
-                disabled={isSaving}>
-                {isSaving ? "Saving..." : "Save Changes"}
-              </button>
-            </Link>
+            <button
+              className="save-btn"
+              onClick={() => {
+                window.location.href =
+                  "upi://pay?pa=carriagepatch.pvt.ltd@okicici&pn=CarriagePatch%20PVT%20LTD&am=299.00&cu=INR";
+              }}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
+            </button>
           ) : (
-            <Link
-              href="upi://pay?pa=carriagepatch.pvt.ltd@okicici&pn=CarriagePatch%20PVT%20LTD&am=299.00&cu=INR"
-              className="buy-link">
-              <button
-                className="save-btn"
-                onClick={handleBuyClick}
-                disabled={isSaving}>
-                {isSaving ? "Opening..." : "Pay with UPI"}
-              </button>
-            </Link>
+            <button
+              className="save-btn"
+              onClick={() => {
+                try {
+                  window.location.href =
+                    "upi://pay?pa=carriagepatch.pvt.ltd@okicici&pn=CarriagePatch%20PVT%20LTD&am=299.00&cu=INR";
+                  
+                } catch (error) {
+                  console.error("Error opening UPI app:", error);
+                  Toast.show("Can't open UPI app.");
+                }
+              }}
+              disabled={isSaving}
+            >
+              {isSaving ? "Opening..." : "Pay with UPI"}
+            </button>
           )}
         </div>
       </div>
