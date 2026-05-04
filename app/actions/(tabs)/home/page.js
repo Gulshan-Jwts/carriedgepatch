@@ -38,7 +38,28 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    const userIsOnSameDevice = localStorage.getItem("isOnSameDevice") === "true";
+    if (userIsOnSameDevice && user?.plan?.active === 1) {
+      async function expirePlan() {
+        await fetch("/api/expirePlan", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            dataUsed: 0,
+          }),
+        });
+      }
+      expirePlan();
+      mutate("/api/user");
+    } else {
+      localStorage.setItem("isOnSameDevice", "true");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user && user?.earned > 0) {
       setEarned(user?.earned);
     }
   }, [user]);
